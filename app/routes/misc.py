@@ -12,7 +12,9 @@ def analyzing_result(language: str, specialization: str, text: str) -> Response:
     return jsonify({"status": 200, "analyze": analyzing_medical_document(language, specialization, text)})
 
 def is_allowed_filename(filename: str) -> bool:
-    return filename.rsplit('.')[1].lower() in ('jpg', 'jpeg', 'png', 'gif', 'docx', 'pdf')
+    filename_parts = filename.rsplit('.')
+
+    return filename_parts[len(filename_parts) - 1].lower() in ('jpg', 'jpeg', 'png', 'gif', 'docx', 'pdf')
 
 def save_file(file: FileStorage) -> str:
     if not os.path.exists(Config.UPLOAD_FOLDER):
