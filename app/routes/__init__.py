@@ -2,7 +2,6 @@
 DoctorAI is not a medical institution and does not replace professional medical consultation."""
 
 from flask import Flask
-
 from .doctor_routes import doctor_routes
 
 def register_routes(app: Flask):
