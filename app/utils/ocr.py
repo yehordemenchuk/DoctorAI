@@ -5,9 +5,9 @@ import pytesseract
 from PIL import Image
 from app.config import Config
 
-def get_text(image_path: str) -> str:
+def get_text(language: str, image_path: str) -> str:
     pytesseract.pytesseract.tesseract_cmd =  Config.TESSERACT_CMD
 
     image = Image.open(image_path)
 
-    return pytesseract.image_to_string(image)
+    return pytesseract.image_to_string(image, lang=language)

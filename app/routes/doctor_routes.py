@@ -38,10 +38,12 @@ def analyze_document() -> Response:
         return jsonify({"status": 404, "error": "Invalid file provided"})
 
     text = read_file(filepath) if not filepath.endswith(('.jpg', '.jpeg', '.png', '.gif')) \
-        else ocr.get_text(filepath)
+        else ocr.get_text(language, filepath)
 
     if text == "":
         return jsonify({"status": 404, "error": "Not text extracted"})
+
+    print(text)
 
     if not delete_file(filepath):
         return jsonify({"status": 404, "error": "File not found"})
