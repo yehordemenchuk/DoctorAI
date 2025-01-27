@@ -8,18 +8,18 @@ def get_response(specialization: str, user_prompt: str) -> str:
     return g4f.ChatCompletion.create(
         model = Config.MODEL,
         messages=[
-            {"role": "system", "content": "Doctor and medical specialist"},
-            {"role": "user", "content": f"""Imagine, you are a real qualified doctor and medical specialist, 
-                                        specialized on {specialization}""" + user_prompt}
+            {"role": "system", "content": f"Real professional {specialization} doctor"},
+            {"role": "user", "content": f"""If you were a real qualified doctor, specialized 
+                                        on {specialization}""" + user_prompt}
         ]
     )
 
 def personal_consultation(language: str, specialization: str, question: str) -> str:
     return get_response(
         specialization,
-        f"""Provide clear, accurate, and ethical advice strictly in {language}, 
+        f"""What clear, accurate, and ethical advice strictly in {language} advices did you provide, 
         ensuring grammatical correctness, words not in answering language or incorrect symbols, 
-        and answering the patient's question {question}."""
+        to the patient's question {question}."""
     )
 
 def analyzing_medical_document(document_language: str,

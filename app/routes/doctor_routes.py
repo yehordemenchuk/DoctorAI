@@ -43,8 +43,6 @@ def analyze_document() -> Response:
     if text == "":
         return jsonify({"status": 404, "error": "Not text extracted"})
 
-    print(text)
-
     if not delete_file(filepath):
         return jsonify({"status": 404, "error": "File not found"})
 
