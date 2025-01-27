@@ -11,12 +11,10 @@ doctor_routes = Blueprint('doctor_routes', __name__)
 
 @doctor_routes.route('/consult', methods = ['GET'])
 def consult() -> Response:
-    data = request.get_json()
-
     return jsonify({"advice": personal_consultation(
-                    data['language'],
-                    data['specialization'],
-                    data['question']
+                    request.form['language'],
+                    request.form['specialization'],
+                    request.form['question']
                   )
            }
     )
@@ -28,7 +26,9 @@ def analyze_document() -> Response:
 
     file = request.files['file']
 
-    language = request.form['language']
+    document_language = request.form['document_language']
+
+    answer_language = request.form['answer_language']
 
     specialization = request.form['specialization']
 
@@ -38,7 +38,7 @@ def analyze_document() -> Response:
         return jsonify({"status": 404, "error": "Invalid file provided"})
 
     text = read_file(filepath) if not filepath.endswith(('.jpg', '.jpeg', '.png', '.gif')) \
-        else ocr.get_text(language, filepath)
+        else ocr.get_text(document_language, filepath)
 
     if text == "":
         return jsonify({"status": 404, "error": "Not text extracted"})
@@ -48,4 +48,4 @@ def analyze_document() -> Response:
     if not delete_file(filepath):
         return jsonify({"status": 404, "error": "File not found"})
 
-    return analyzing_result(language, specialization, text)
+    return analyzing_result(document_language, answer_language, specialization, text)

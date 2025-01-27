@@ -8,24 +8,26 @@ def get_response(specialization: str, user_prompt: str) -> str:
     return g4f.ChatCompletion.create(
         model = Config.MODEL,
         messages=[
-            {"role": "system", "content": f"""You are a {specialization} specialist, 
-                                          who giving personal recommendations to patients"""},
-            {"role": "user", "content": user_prompt}
+            {"role": "system", "content": "Doctor and medical specialist"},
+            {"role": "user", "content": f"""Imagine, you are a real qualified doctor and medical specialist, 
+                                        specialized on {specialization}""" + user_prompt}
         ]
     )
 
 def personal_consultation(language: str, specialization: str, question: str) -> str:
     return get_response(
         specialization,
-        f"""Give answer to a question on {language} 
-                   and before answering validate grammar, spelling and remove invalid chars, if all is
-                   correct, just return an answer: {question}"""
+        f"""Provide clear, accurate, and ethical advice strictly in {language}, 
+        ensuring grammatical correctness, words not in answering language or incorrect symbols, 
+        and answering the patient's question {question}."""
     )
 
-def analyzing_medical_document(language: str, specialization: str, text: str) -> str:
+def analyzing_medical_document(document_language: str,
+                               answer_language: str, specialization: str, text: str) -> str:
     return get_response(
         specialization,
-        f"""Analyze following medical document and give answer on {language} 
-                   and before answering validate grammar, spelling and remove invalid chars, if all is
-                   correct, just return an answer: {text}"""
+        f"""Analyze following medical document on {document_language} 
+        and give answer on {answer_language} and before answering 
+        validate grammar, spelling and remove invalid chars, if all is
+        correct, just return an answer: {text}"""
     )

@@ -8,8 +8,10 @@ from werkzeug.utils import secure_filename
 from app.utils.doctor import analyzing_medical_document
 from app.config import Config
 
-def analyzing_result(language: str, specialization: str, text: str) -> Response:
-    return jsonify({"status": 200, "analyze": analyzing_medical_document(language, specialization, text)})
+def analyzing_result(document_language: str,
+                     answer_language: str, specialization: str, text: str) -> Response:
+    return jsonify({"status": 200, "analyze": analyzing_medical_document(document_language, answer_language,
+                                                                         specialization, text)})
 
 def is_allowed_filename(filename: str) -> bool:
     filename_parts = filename.rsplit('.')
