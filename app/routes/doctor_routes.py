@@ -37,8 +37,8 @@ def analyze_document() -> Response:
     if not file or file.filename == '' or not is_allowed_filename(filepath):
         return jsonify({"status": 404, "error": "Invalid file provided"})
 
-    text = read_file(filepath) if not filepath.endswith(('.jpg', '.jpeg', '.png', '.gif')) \
-        else ocr.get_text(document_language, filepath)
+    text = read_file(filepath, document_language) if filepath.endswith(('.pdf', '.docx')) \
+        else ocr.get_text_from_image(document_language, filepath)
 
     if text == "":
         return jsonify({"status": 404, "error": "Not text extracted"})

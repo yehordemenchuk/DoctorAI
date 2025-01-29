@@ -4,10 +4,19 @@ DoctorAI is not a medical institution and does not replace professional medical 
 import pytesseract
 from PIL import Image
 from app.config import Config
+from pdfplumber.pdf import PDF
 
-def get_text(language: str, image_path: str) -> str:
+def initialize_pytesseract():
     pytesseract.pytesseract.tesseract_cmd = Config.TESSERACT_CMD
+
+def get_text_from_image(language: str, image_path: str) -> str:
+    initialize_pytesseract()
 
     image = Image.open(image_path)
 
     return pytesseract.image_to_string(image, lang=language)
+
+def get_text_from_pdf(pdf: PDF, language: str) -> str:
+    initialize_pytesseract()
+
+    return "\n".join(pytesseract.image_to_string(page.to_image().original, lang=language) for page in pdf.pages)
