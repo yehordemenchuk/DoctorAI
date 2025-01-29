@@ -7,7 +7,7 @@ from app.config import Config
 def get_response(specialization: str, user_prompt: str) -> str:
     return g4f.ChatCompletion.create(
         model = Config.MODEL,
-        messages=[
+        messages = [
             {"role": "system", "content": f"Real professional {specialization} doctor"},
             {"role": "user", "content": f"""If you were a real qualified doctor, specialized 
                                         on {specialization}""" + user_prompt}
