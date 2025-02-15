@@ -3,14 +3,19 @@ DoctorAI is not a medical institution and does not replace professional medical 
 
 import g4f
 from app.config import Config
+from .rag import search_docs
 
 def get_response(specialization: str, user_prompt: str) -> str:
+    retrieved_docs = search_docs(user_prompt)
+    context = '\n'.join(retrieved_docs)
+
     return g4f.ChatCompletion.create(
         model = Config.MODEL,
         messages = [
             {"role": "system", "content": f"Real professional {specialization} doctor"},
             {"role": "user", "content": f"""Act as real, qualified and professional doctor 
-                                        specialized on {specialization}.""" + user_prompt}
+                                        specialized on {specialization}. Build answer on following 
+                                        context: {context}. """ + user_prompt}
         ]
     )
 

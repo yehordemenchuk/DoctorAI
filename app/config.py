@@ -5,3 +5,5 @@ class Config:
     TESSERACT_CMD = r'D:\Tesseract-OCR\tesseract.exe'
     MODEL = "gpt-4o"
     UPLOAD_FOLDER = 'uploads'
+    PDF_FOLDER = 'library'
+    TRANSFORMER_EMBEDDINGS_MODEL_NAME = "all-MiniLM-L6-v2"
