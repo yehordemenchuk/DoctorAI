@@ -8,7 +8,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.config import Config
 
-def load_pdf(file_path: str):
+def load_pdf(file_path: str) -> list:
     loader = PyPDFLoader(file_path)
 
     return loader.load()
