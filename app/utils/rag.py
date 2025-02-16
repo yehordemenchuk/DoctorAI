@@ -20,7 +20,7 @@ def load_pdfs(pdf_folder: str) -> list:
                  for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
 
 
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor() as executor:
         results = list(executor.map(load_pdf, pdf_files))
 
     for result in results:
@@ -43,7 +43,7 @@ index.add(embeddings)
 def search_docs(query: str, k=3) -> list:
     query_vector = np.array([embedding_model.embed_query(query)])
 
-    distances, indices = index.search(query_vector, k)
+    _, indices = index.search(query_vector, k)
 
     return [texts[i] for i in indices[0]]
 

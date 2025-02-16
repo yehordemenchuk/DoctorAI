@@ -15,7 +15,10 @@ def get_response(specialization: str, user_prompt: str) -> str:
             {"role": "system", "content": f"Real professional {specialization} doctor"},
             {"role": "user", "content": f"""Act as real, qualified and professional doctor 
                                         specialized on {specialization}. Build answer on following 
-                                        context: {context}. """ + user_prompt}
+                                        context: {context} (answer only on language giving in prompt, 
+                                        not on context`s language, even if languages are 
+                                        in different language groups). """
+                                        + user_prompt}
         ]
     )
 
