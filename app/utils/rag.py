@@ -1,3 +1,6 @@
+"""© 2025 DoctorAI. All rights reserved. Use of this application constitutes acceptance of the Privacy Policy and Terms of Use.
+DoctorAI is not a medical institution and does not replace professional medical consultation."""
+
 import os
 from concurrent.futures import ThreadPoolExecutor
 
