@@ -3,7 +3,6 @@ DoctorAI is not a medical institution and does not replace professional medical 
 
 import g4f
 from app.config import Config
-from .rag import search_docs
 
 def get_response(specialization: str, user_prompt: str) -> str:
     return g4f.ChatCompletion.create(
