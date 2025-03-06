@@ -6,19 +6,12 @@ from app.config import Config
 from .rag import search_docs
 
 def get_response(specialization: str, user_prompt: str) -> str:
-    retrieved_docs = search_docs(user_prompt)
-    context = '\n'.join(retrieved_docs)
-
     return g4f.ChatCompletion.create(
         model = Config.MODEL,
         messages = [
             {"role": "system", "content": f"Real professional {specialization} doctor"},
             {"role": "user", "content": f"""Act as real, qualified and professional doctor 
-                                        specialized on {specialization}. Build answer on following 
-                                        context: {context} (answer only on language giving in prompt, 
-                                        not on context`s language, even if languages are 
-                                        in different language groups). """
-                                        + user_prompt}
+                                        specialized on {specialization}.""" + user_prompt}
         ]
     )
 
