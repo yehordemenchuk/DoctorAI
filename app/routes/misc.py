@@ -4,7 +4,10 @@ DoctorAI is not a medical institution and does not replace professional medical 
 import os
 from flask import jsonify, Response
 from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
+#from werkzeug.utils import secure_filename
+
+from app import db
+from app.models import Message
 from app.utils.doctor import analyzing_medical_document
 from app.config import Config
 
@@ -22,7 +25,7 @@ def save_file(file: FileStorage) -> str:
     if not os.path.exists(Config.UPLOAD_FOLDER):
         os.makedirs(Config.UPLOAD_FOLDER)
 
-    filepath = os.path.join(Config.UPLOAD_FOLDER, secure_filename(file.filename))
+    filepath = os.path.join(Config.UPLOAD_FOLDER, file.filename)
 
     file.save(filepath)
 
@@ -35,3 +38,7 @@ def delete_file(filepath: str) -> bool:
         return True
 
     return False
+
+def save_message(content: str, chat_id: str):
+    db.session.add(Message(content=content, chat_id=int(chat_id)))
+    db.session.commit()
