@@ -3,6 +3,9 @@ DoctorAI is not a medical institution and does not replace professional medical 
 
 from flask import Flask
 from .doctor_routes import doctor_routes
+from .user_routes import user_routes
+
 
 def register_routes(app: Flask):
     app.register_blueprint(doctor_routes)
+    app.register_blueprint(user_routes)

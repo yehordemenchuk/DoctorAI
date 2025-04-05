@@ -22,7 +22,7 @@ def consult() -> Response:
 @doctor_routes.route('/analyze', methods = ['GET'])
 def analyze_document() -> Response:
     if "file" not in request.files:
-        return jsonify({"status": 404, "error": "No file provided"})
+        return jsonify({"status": 400, "error": "No file provided"})
 
     file = request.files['file']
 
@@ -35,7 +35,7 @@ def analyze_document() -> Response:
     filepath = save_file(file)
 
     if not file or file.filename == '' or not is_allowed_filename(filepath):
-        return jsonify({"status": 404, "error": "Invalid file provided"})
+        return jsonify({"status": 400, "error": "Invalid file provided"})
 
     text = read_file(filepath, document_language) if filepath.endswith(('.pdf', '.docx')) \
         else ocr.get_text_from_image(document_language, filepath)
