@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, session
 
 from app import db
 from app.models import User
+from app.routes.misc import is_user_role_admin, unauthorized_access_message
 
 user_routes = Blueprint('user_routes', __name__)
 
@@ -46,3 +47,21 @@ def login() -> tuple:
         session['user_role'] = 'admin'
 
     return jsonify({'status': 200, 'message': 'Login successfully'}), 200
+
+@user_routes.route('/users', methods=['GET'])
+def get_all_users() -> tuple:
+    if not is_user_role_admin():
+        return unauthorized_access_message()
+
+    users = User.query.all()
+
+    if not users:
+        return jsonify({'status': 404, 'message': 'No users found'}), 404
+
+    return jsonify({'status': 200,
+                    'users': [
+                        {'id': user.id,
+                        'username': user.username,
+                        'login': user.login,
+                        'hash_password': user.hash_password}
+                    for user in users]}), 200

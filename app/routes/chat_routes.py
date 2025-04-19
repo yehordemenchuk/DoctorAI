@@ -29,7 +29,20 @@ def get_chat_messages(chat_id: int) -> tuple:
 
     return jsonify({'status': 200, 'messages': messages}), 200
 
-@chat_routes.route('/messages', methods=['GET'])
+@chat_routes.route('/user-chats/<int:user_id>', methods=['GET'])
+def get_user_chats(user_id: int) -> tuple:
+    chats = Chat.query.filter_by(user_id=user_id).all()
+
+    if not chats:
+        return jsonify({'status': 404, 'message': 'Chats not found'}), 404
+
+    return jsonify({'status': 200,
+                    'chats': [{'id': chat.id,
+                                 'user_id': chat.user_id,
+                                 'first_message': chat.messages[0].content}
+                                 for chat in chats]}), 200
+
+@chat_routes.route('/chats', methods=['GET'])
 def get_all_chats() -> tuple:
     if is_user_role_admin():
         return jsonify({'status': 403, 'message': 'You are not authorized to access this page'}), 403
@@ -40,7 +53,7 @@ def get_all_chats() -> tuple:
         return jsonify({'status': 404, 'message': 'Error'}), 404
 
     return jsonify({'status': 200,
-                    'messages': [{'id': chat.id,
+                    'chats': [{'id': chat.id,
                                  'user_id': chat.user_id,
                                  'first_message': chat.messages[0].content}
                                  for chat in chats]}), 200
