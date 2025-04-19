@@ -2,9 +2,8 @@
 DoctorAI is not a medical institution and does not replace professional medical consultation."""
 
 import os
-from flask import jsonify, Response
+from flask import jsonify, Response, session
 from werkzeug.datastructures import FileStorage
-#from werkzeug.utils import secure_filename
 
 from app import db
 from app.models import Message
@@ -42,3 +41,9 @@ def delete_file(filepath: str) -> bool:
 def save_message(content: str, chat_id: str):
     db.session.add(Message(content=content, chat_id=int(chat_id)))
     db.session.commit()
+
+def is_user_role_admin() -> bool:
+    return session.get('user_role') == 'admin'
+
+def unauthorized_access_message() -> tuple:
+    return jsonify({'status': 403, 'message': 'You are not authorized to access this page'}), 403

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 
 from app import db
 from app.models import User
@@ -41,5 +41,8 @@ def login() -> tuple:
 
     if hash_password != user.hash_password:
         return jsonify({'status': 401, 'message': 'Invalid password'}), 401
+
+    if user_login == 'admin':
+        session['user_role'] = 'admin'
 
     return jsonify({'status': 200, 'message': 'Login successfully'}), 200
