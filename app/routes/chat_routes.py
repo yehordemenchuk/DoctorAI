@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 
 from app import db
 from app.models import Chat
-from app.routes.misc import is_user_role_admin
+from app.routes.misc import is_user_role_admin, get_chats
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 chat_routes = Blueprint('chat_routes', __name__)
 
@@ -20,10 +21,7 @@ def create_chat() -> tuple:
 
 @chat_routes.route('/messages/<int:chat_id>', methods=['GET'])
 def get_chat_messages(chat_id: int) -> tuple:
-    chat = Chat.query.filter_by(chat_id=chat_id).first()
-
-    if not chat:
-        return jsonify({'status': 404, 'message': 'Chat not found'}), 404
+    chat = Chat.query.get_or_404(chat_id)
 
     messages = [message.content for message in chat.messages]
 
@@ -34,26 +32,18 @@ def get_user_chats(user_id: int) -> tuple:
     chats = Chat.query.filter_by(user_id=user_id).all()
 
     if not chats:
-        return jsonify({'status': 404, 'message': 'Chats not found'}), 404
+        return jsonify({'status': 404, 'message': 'Error'}), 404
 
-    return jsonify({'status': 200,
-                    'chats': [{'id': chat.id,
-                                 'user_id': chat.user_id,
-                                 'first_message': chat.messages[0].content}
-                                 for chat in chats]}), 200
+    return get_chats(chats)
 
 @chat_routes.route('/chats', methods=['GET'])
 def get_all_chats() -> tuple:
-    if is_user_role_admin():
-        return jsonify({'status': 403, 'message': 'You are not authorized to access this page'}), 403
+    if not is_user_role_admin():
+        raise NoAuthorizationError()
 
     chats = Chat.query.all()
 
     if not chats:
         return jsonify({'status': 404, 'message': 'Error'}), 404
 
-    return jsonify({'status': 200,
-                    'chats': [{'id': chat.id,
-                                 'user_id': chat.user_id,
-                                 'first_message': chat.messages[0].content}
-                                 for chat in chats]}), 200
+    return get_chats(chats)

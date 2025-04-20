@@ -45,5 +45,9 @@ def save_message(content: str, chat_id: str):
 def is_user_role_admin() -> bool:
     return session.get('user_role') == 'admin'
 
-def unauthorized_access_message() -> tuple:
-    return jsonify({'status': 403, 'message': 'You are not authorized to access this page'}), 403
+def get_chats(chats: list) -> tuple:
+    return jsonify({'status': 200,
+                    'chats': [{'id': chat.id,
+                                 'user_id': chat.user_id,
+                                 'first_message': chat.messages[0].content if chat.messages else None}
+                                 for chat in chats]}), 200

@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify, session
 
 from app import db
 from app.models import User
-from app.routes.misc import is_user_role_admin, unauthorized_access_message
+from app.routes.misc import is_user_role_admin
+from flask_jwt_extended.exceptions import NoAuthorizationError
 
 user_routes = Blueprint('user_routes', __name__)
 
@@ -46,12 +47,15 @@ def login() -> tuple:
     if user_login == 'admin':
         session['user_role'] = 'admin'
 
+    else:
+        session['user_role'] = 'user'
+
     return jsonify({'status': 200, 'message': 'Login successfully'}), 200
 
 @user_routes.route('/users', methods=['GET'])
 def get_all_users() -> tuple:
     if not is_user_role_admin():
-        return unauthorized_access_message()
+        raise NoAuthorizationError()
 
     users = User.query.all()
 
@@ -65,3 +69,19 @@ def get_all_users() -> tuple:
                         'login': user.login,
                         'hash_password': user.hash_password}
                     for user in users]}), 200
+
+@user_routes.route('/user/<int:user_id>', methods=['GET'])
+def update_user(user_id: int) -> tuple:
+    if not is_user_role_admin():
+        raise NoAuthorizationError()
+
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return jsonify({'status': 404, 'message': 'User does not exist'}), 404
+
+    return jsonify({'status': 200, 'user': {
+        'id': user.id,
+        'username': user.username,
+        'login': user.login,
+        'hash_password': user.hash_password}}), 200
