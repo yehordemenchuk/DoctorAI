@@ -71,7 +71,7 @@ def get_all_users() -> tuple:
                     for user in users]}), 200
 
 @user_routes.route('/user/<int:user_id>', methods=['GET'])
-def update_user(user_id: int) -> tuple:
+def get_by_id_user(user_id: int) -> tuple:
     if not is_user_role_admin():
         raise NoAuthorizationError()
 
