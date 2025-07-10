@@ -3,7 +3,6 @@ DoctorAI is not a medical institution and does not replace professional medical 
 import os
 import secrets
 
-
 class Config:
     TESSERACT_CMD = r'D:\Tesseract-OCR\tesseract.exe'
     MODEL = "gpt-4o"
