@@ -14,18 +14,15 @@ from pathlib import Path
 class Config:
     """Professional configuration class for DoctorAI medical AI system."""
     
-    # Application Settings
     SECRET_KEY = secrets.token_hex(16)
     DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
     
-    # File and Directory Settings
     BASE_DIR = Path(__file__).parent.parent
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'uploads')
     PDF_FOLDER = os.environ.get('PDF_FOLDER', 'library')
     STATIC_FOLDER = os.environ.get('STATIC_FOLDER', 'static')
     TEMPLATES_FOLDER = os.environ.get('TEMPLATES_FOLDER', 'templates')
     
-    # Database Settings
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL', 
         'sqlite:///instance/database.db'
@@ -36,13 +33,11 @@ class Config:
         'pool_recycle': 300,
     }
     
-    # AI Model Settings
     MODEL = os.environ.get('AI_MODEL', 'gpt-4o')
     FALLBACK_MODEL = os.environ.get('FALLBACK_MODEL', 'gpt-3.5-turbo')
     MAX_RETRIES = int(os.environ.get('MAX_RETRIES', '3'))
     REQUEST_TIMEOUT = int(os.environ.get('REQUEST_TIMEOUT', '30'))
     
-    # RAG System Settings
     TRANSFORMER_EMBEDDINGS_MODEL_NAME = os.environ.get(
         'EMBEDDINGS_MODEL', 
         'sentence-transformers/all-MiniLM-L6-v2'
@@ -55,14 +50,12 @@ class Config:
     RAG_BATCH_SIZE = int(os.environ.get('RAG_BATCH_SIZE', '32'))
     RAG_MAX_WORKERS = int(os.environ.get('RAG_MAX_WORKERS', '4'))
     
-    # MCP (Model Context Protocol) Settings
     MCP_MAX_CONTEXT_TOKENS = int(os.environ.get('MCP_MAX_CONTEXT_TOKENS', '8000'))
     MCP_TOKEN_BUFFER = int(os.environ.get('MCP_TOKEN_BUFFER', '1000'))
     MCP_ENABLE_PERSISTENCE = os.environ.get('MCP_ENABLE_PERSISTENCE', 'True').lower() == 'true'
-    MCP_CONTEXT_STRATEGY = os.environ.get('MCP_CONTEXT_STRATEGY', 'priority')  # 'fifo' or 'priority'
+    MCP_CONTEXT_STRATEGY = os.environ.get('MCP_CONTEXT_STRATEGY', 'priority')
     MCP_PRESERVE_SYSTEM_MESSAGES = os.environ.get('MCP_PRESERVE_SYSTEM_MESSAGES', 'True').lower() == 'true'
     
-    # OCR Settings
     TESSERACT_CMD = os.environ.get(
         'TESSERACT_CMD', 
         r'D:\Tesseract-OCR\tesseract.exe'
@@ -71,40 +64,34 @@ class Config:
     OCR_PAGE_SEGMENTATION = int(os.environ.get('OCR_PAGE_SEGMENTATION', '6'))
     OCR_ENGINE_MODE = int(os.environ.get('OCR_ENGINE_MODE', '3'))
     
-    # Medical AI Safety Settings
     MEDICAL_DISCLAIMER_REQUIRED = True
     ENABLE_SAFETY_FILTERS = os.environ.get('ENABLE_SAFETY_FILTERS', 'True').lower() == 'true'
     MAX_CONSULTATION_LENGTH = int(os.environ.get('MAX_CONSULTATION_LENGTH', '5000'))
     REQUIRE_PROFESSIONAL_DISCLAIMER = True
     
-    # Performance Settings
     MAX_FILE_SIZE_MB = int(os.environ.get('MAX_FILE_SIZE_MB', '50'))
     MAX_CONCURRENT_REQUESTS = int(os.environ.get('MAX_CONCURRENT_REQUESTS', '10'))
     CACHE_TIMEOUT = int(os.environ.get('CACHE_TIMEOUT', '3600'))
     
-    # Logging Configuration
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
     LOG_FORMAT = os.environ.get(
         'LOG_FORMAT',
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     LOG_FILE = os.environ.get('LOG_FILE', 'logs/doctorai.log')
-    LOG_MAX_BYTES = int(os.environ.get('LOG_MAX_BYTES', '10485760'))  # 10MB
+    LOG_MAX_BYTES = int(os.environ.get('LOG_MAX_BYTES', '10485760'))
     LOG_BACKUP_COUNT = int(os.environ.get('LOG_BACKUP_COUNT', '5'))
     
-    # Security Settings
-    SESSION_TIMEOUT = int(os.environ.get('SESSION_TIMEOUT', '3600'))  # 1 hour
+    SESSION_TIMEOUT = int(os.environ.get('SESSION_TIMEOUT', '3600'))
     RATE_LIMIT_PER_MINUTE = int(os.environ.get('RATE_LIMIT_PER_MINUTE', '60'))
     ENABLE_CSRF_PROTECTION = os.environ.get('ENABLE_CSRF_PROTECTION', 'True').lower() == 'true'
     
-    # API Settings
     API_VERSION = os.environ.get('API_VERSION', 'v1')
     API_RATE_LIMIT = os.environ.get('API_RATE_LIMIT', '100/hour')
     
     @classmethod
     def init_app(cls, app):
         """Initialize application with configuration."""
-        # Create necessary directories
         dirs_to_create = [
             cls.UPLOAD_FOLDER,
             cls.PDF_FOLDER,
@@ -115,23 +102,20 @@ class Config:
         for directory in dirs_to_create:
             os.makedirs(directory, exist_ok=True)
         
-        # Configure logging
         cls.setup_logging()
     
     @classmethod
     def setup_logging(cls):
         """Setup professional logging configuration."""
-        # Create logs directory if it doesn't exist
         log_dir = os.path.dirname(cls.LOG_FILE)
         if log_dir:
             os.makedirs(log_dir, exist_ok=True)
         
-        # Configure root logger
         logging.basicConfig(
             level=getattr(logging, cls.LOG_LEVEL),
             format=cls.LOG_FORMAT,
             handlers=[
-                logging.StreamHandler(),  # Console output
+                logging.StreamHandler(),
                 logging.handlers.RotatingFileHandler(
                     cls.LOG_FILE,
                     maxBytes=cls.LOG_MAX_BYTES,
@@ -140,11 +124,9 @@ class Config:
             ]
         )
         
-        # Set specific logger levels
         logging.getLogger('werkzeug').setLevel(logging.WARNING)
         logging.getLogger('urllib3').setLevel(logging.WARNING)
         
-        # Create application logger
         app_logger = logging.getLogger('doctorai')
         app_logger.setLevel(getattr(logging, cls.LOG_LEVEL))
     
@@ -195,7 +177,6 @@ class TestingConfig(Config):
     WTF_CSRF_ENABLED = False
 
 
-# Configuration dictionary
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,

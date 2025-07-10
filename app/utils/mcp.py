@@ -1,10 +1,4 @@
-"""
-© 2025 DoctorAI. All rights reserved. 
-Use of this application constitutes acceptance of the Privacy Policy and Terms of Use.
-DoctorAI is not a medical institution and does not replace professional medical consultation.
 
-Professional Model Context Protocol (MCP) Implementation for Medical AI Systems
-"""
 
 import json
 import logging
@@ -16,7 +10,6 @@ from abc import ABC, abstractmethod
 
 from app.config import Config
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
 
@@ -191,11 +184,9 @@ class FIFOContextManager(ContextManager):
         Returns:
             True if message was successfully added
         """
-        # Try to add message directly
         if context_window.can_add_message(new_message):
             return context_window.add_message(new_message)
         
-        # Remove oldest messages until we have space
         while context_window.messages and not context_window.can_add_message(new_message):
             removed = context_window.remove_oldest_messages(1)
             logger.debug(f"Removed message to make space: {removed[0].content[:50]}...")
@@ -220,18 +211,15 @@ class PriorityContextManager(ContextManager):
         Returns:
             True if message was successfully added
         """
-        # Try to add message directly
         if context_window.can_add_message(new_message):
             return context_window.add_message(new_message)
         
-        # Remove non-priority messages first
         messages_to_remove = []
         for i, message in enumerate(context_window.messages):
             if self.preserve_system_messages and message.role == MessageRole.SYSTEM:
                 continue
             messages_to_remove.append(i)
         
-        # Remove from oldest non-priority messages
         for i in reversed(messages_to_remove):
             if context_window.can_add_message(new_message):
                 break
@@ -268,12 +256,10 @@ class MedicalContextProtocol:
         self.context_manager = context_manager or FIFOContextManager()
         self.enable_persistence = enable_persistence
         
-        # Conversation metadata
         self.conversation_id: Optional[str] = None
         self.session_metadata: Dict[str, Any] = {}
         self.message_handlers: Dict[ContentType, Callable] = {}
         
-        # Initialize system context
         self._initialize_system_context()
         
         logger.info(f"Initialized MedicalContextProtocol with {max_context_tokens} token limit")
@@ -322,7 +308,6 @@ class MedicalContextProtocol:
             MCPError: If message cannot be processed
         """
         try:
-            # Convert string enums to enum objects
             if isinstance(role, str):
                 role = MessageRole(role.lower())
             if isinstance(content_type, str):
@@ -335,13 +320,11 @@ class MedicalContextProtocol:
                 metadata=metadata or {}
             )
             
-            # Use context manager to handle the message
             success = self.context_manager.manage_context(self.context_window, message)
             
             if success:
                 logger.debug(f"Added {role.value} message with {len(content)} characters")
                 
-                # Handle special content types
                 if content_type in self.message_handlers:
                     self.message_handlers[content_type](message)
             
@@ -497,7 +480,6 @@ class MedicalContextProtocol:
         return self.session_metadata.get(key, default)
 
 
-# Global instance for easy access
 _mcp_instance: Optional[MedicalContextProtocol] = None
 
 
